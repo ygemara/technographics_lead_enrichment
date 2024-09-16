@@ -4,6 +4,27 @@ import requests
 import json
 from io import StringIO
 
+def save_data_to_google_sheets(data):
+    credentials = service_account.Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=[
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
+    )
+
+    client = gspread.authorize(credentials)
+    sheet_id = st.secrets["sheet_id"]
+    sheet = client.open_by_key(sheet_id)
+    worksheet = sheet.worksheet("Sheet1")
+    
+    # Clear the existing content
+    worksheet.clear()
+
+    # Update with new data
+    worksheet.update([data.columns.values.tolist()] + data.values.tolist())
+    st.write(f"Data saved to Google Sheets with ID {sheet_id}")
+
 def fetch_technographics(api_key, domains, limit):
     main_df = pd.DataFrame()
     for domain in domains:
@@ -71,6 +92,7 @@ def fetch_lead_enrichment(api_key, start_date, end_date, country, domains):
 
                 new_df = new_df[["domain", "date", "country", "global_rank", "site_type", "site_type_new", "company_name", "employee_range", "estimated_revenue_in_usd", "zip_code", "headquarters", "website_category", "website_category_new", "category_rank", "pages_per_visit", "visits", "mom_growth", "unique_visitors", "bounce_rate", "average_visit_duration", "desktop_share", "mobile_share"]]
                 lead_enrichment_df = pd.concat([lead_enrichment_df, new_df])
+                save_data_to_google_sheets(lead_enrichment_df)
             else:
                 st.warning(f"No lead_enrichment for {domain}")
         else:
