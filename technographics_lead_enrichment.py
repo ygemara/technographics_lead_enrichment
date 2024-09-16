@@ -3,6 +3,9 @@ import pandas as pd
 import requests
 import json
 from io import StringIO
+import gspread
+from google.oauth2 import service_account
+
 
 def save_data_to_google_sheets(data):
     credentials = service_account.Credentials.from_service_account_info(
