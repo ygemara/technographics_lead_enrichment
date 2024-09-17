@@ -20,12 +20,10 @@ def save_data_to_google_sheets(data):
     sheet_id = st.secrets["sheet_id"]
     sheet = client.open_by_key(sheet_id)
     worksheet = sheet.worksheet("Sheet1")
-
-    worksheet = client.open_by_key(sheet_id).worksheet('Sheet1')  # Replace 'Sheet1' with the actual sheet name
     
     st.write("hello")
     # Clear the existing content
-    #worksheet.clear()
+    worksheet.clear()
     
     # Update with new data
     worksheet.update([data.columns.values.tolist()] + data.values.tolist())
