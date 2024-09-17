@@ -5,7 +5,7 @@ import json
 from io import StringIO
 import gspread
 from google.oauth2 import service_account
-
+from oauth2client.service_account import ServiceAccountCredentials
 
 def save_data_to_google_sheets(data):
     credentials = service_account.Credentials.from_service_account_info(
