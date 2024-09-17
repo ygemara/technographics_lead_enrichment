@@ -8,6 +8,11 @@ from google.oauth2 import service_account
 from oauth2client.service_account import ServiceAccountCredentials
 
 def save_data_to_google_sheets(data, sheet_name):
+    from google.oauth2 import service_account
+    import gspread
+    import streamlit as st
+
+    # Authorize with service account credentials
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
         scopes=[
@@ -23,16 +28,18 @@ def save_data_to_google_sheets(data, sheet_name):
     
     # Get the current data in the sheet
     existing_data = worksheet.get_all_values()
-    
-    # If the sheet is empty, add headers
-    if not existing_data:
-        worksheet.append_row(data.columns.values.tolist())
+
+    # If the sheet is empty, or if there are no column headers in the first row, add headers
+    if len(existing_data) == 0 or not existing_data[0]:  # Check if the first row is empty
+        worksheet.append_row(data.columns.values.tolist())  # Add column headers
     
     # Append new data
     new_data = data.values.tolist()
     worksheet.append_rows(new_data)
 
-    #st.write(f"Data appended to Google Sheets with ID {sheet_id}")
+    # Optionally, confirm the operation
+    # st.write(f"Data appended to Google Sheets with ID {sheet_id}")
+
 
 def fetch_technographics(api_key, domains, limit):
     technographics_df = pd.DataFrame()
