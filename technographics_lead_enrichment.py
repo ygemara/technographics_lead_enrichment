@@ -19,7 +19,7 @@ def save_data_to_google_sheets(data):
     client = gspread.authorize(credentials)
     sheet_id = st.secrets["sheet_id"]
     sheet = client.open_by_key(sheet_id)
-    worksheet = sheet.worksheet("Sheet1")
+    worksheet = sheet.worksheet("lead_enrichment")
     
     # Get the current data in the sheet
     existing_data = worksheet.get_all_values()
