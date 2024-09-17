@@ -55,12 +55,13 @@ def fetch_technographics(api_key, domains, limit):
                 new_df = pd.json_normalize(json_response["technologies"])
                 new_df["domain"] = domain
                 technographics_df = pd.concat([technographics_df, new_df])
+                technographics_df = technographics_df[["domain", "technology_name","category","sub_category","free_paid","description"]] 
                 save_data_to_google_sheets(technographics_df, "technographics")
             else:
                 st.warning(f"No related apps found for {domain}")
         else:
             st.error(f"Error fetching data for {domain}: {response.status_code}")
-    return technographics_df[["domain", "technology_name","category","sub_category","free_paid","description"]] if not technographics_df.empty else None
+    return technographics_df if not technographics_df.empty else None
 
 def fetch_lead_enrichment(api_key, start_date, end_date, country, domains):
     lead_enrichment_df = pd.DataFrame()
