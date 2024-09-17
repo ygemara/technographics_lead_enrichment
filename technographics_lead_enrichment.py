@@ -95,7 +95,7 @@ def fetch_lead_enrichment(api_key, start_date, end_date, country, domains):
 
                 new_df = new_df[["domain", "date", "country", "global_rank", "site_type", "site_type_new", "company_name", "employee_range", "estimated_revenue_in_usd", "zip_code", "headquarters", "website_category", "website_category_new", "category_rank", "pages_per_visit", "visits", "mom_growth", "unique_visitors", "bounce_rate", "average_visit_duration", "desktop_share", "mobile_share"]]
                 lead_enrichment_df = pd.concat([lead_enrichment_df, new_df])
-                #save_data_to_google_sheets(lead_enrichment_df)
+                save_data_to_google_sheets(lead_enrichment_df)
             else:
                 st.warning(f"No lead_enrichment for {domain}")
         else:
