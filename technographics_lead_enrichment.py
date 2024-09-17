@@ -7,7 +7,7 @@ import gspread
 from google.oauth2 import service_account
 from oauth2client.service_account import ServiceAccountCredentials
 
-def save_data_to_google_sheets(data):
+def save_data_to_google_sheets(data, sheet_name):
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
         scopes=[
@@ -19,7 +19,7 @@ def save_data_to_google_sheets(data):
     client = gspread.authorize(credentials)
     sheet_id = st.secrets["sheet_id"]
     sheet = client.open_by_key(sheet_id)
-    worksheet = sheet.worksheet("lead_enrichment")
+    worksheet = sheet.worksheet(sheet_name)
     
     # Get the current data in the sheet
     existing_data = worksheet.get_all_values()
@@ -35,7 +35,7 @@ def save_data_to_google_sheets(data):
     #st.write(f"Data appended to Google Sheets with ID {sheet_id}")
 
 def fetch_technographics(api_key, domains, limit):
-    main_df = pd.DataFrame()
+    technographics_df = pd.DataFrame()
     for domain in domains:
         url = f"https://api.similarweb.com/v4/website/{domain}/technographics/all?api_key={api_key}&format=json&limit={limit}"
         
@@ -47,12 +47,13 @@ def fetch_technographics(api_key, domains, limit):
             if json_response.get("technologies"):
                 new_df = pd.json_normalize(json_response["technologies"])
                 new_df["domain"] = domain
-                main_df = pd.concat([main_df, new_df])
+                technographics_df = pd.concat([technographics_df, new_df])
+                save_data_to_google_sheets(technographics_df, "technographics")
             else:
                 st.warning(f"No related apps found for {domain}")
         else:
             st.error(f"Error fetching data for {domain}: {response.status_code}")
-    return main_df[["domain", "technology_name","category","sub_category","free_paid","description"]] if not main_df.empty else None
+    return technographics_df[["domain", "technology_name","category","sub_category","free_paid","description"]] if not technographics_df.empty else None
 
 def fetch_lead_enrichment(api_key, start_date, end_date, country, domains):
     lead_enrichment_df = pd.DataFrame()
@@ -101,7 +102,7 @@ def fetch_lead_enrichment(api_key, start_date, end_date, country, domains):
 
                 new_df = new_df[["domain", "date", "country", "global_rank", "site_type", "site_type_new", "company_name", "employee_range", "estimated_revenue_in_usd", "zip_code", "headquarters", "website_category", "website_category_new", "category_rank", "pages_per_visit", "visits", "mom_growth", "unique_visitors", "bounce_rate", "average_visit_duration", "desktop_share", "mobile_share"]]
                 lead_enrichment_df = pd.concat([lead_enrichment_df, new_df])
-                save_data_to_google_sheets(lead_enrichment_df)
+                save_data_to_google_sheets(lead_enrichment_df, "lead_enrichment")
             else:
                 st.warning(f"No lead_enrichment for {domain}")
         else:
