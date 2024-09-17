@@ -28,7 +28,7 @@ def save_data_to_google_sheets(data):
         st.write("Worksheet not found.")
     st.write("hello")
     # Clear the existing content
-    worksheet.clear()
+    #worksheet.clear()
     
     # Update with new data
     worksheet.update([data.columns.values.tolist()] + data.values.tolist())
