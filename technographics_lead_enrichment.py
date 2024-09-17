@@ -21,13 +21,12 @@ def save_data_to_google_sheets(data):
     sheet = client.open_by_key(sheet_id)
     worksheet = sheet.worksheet("Sheet1")
     
-    st.write("hello")
     # Clear the existing content
     worksheet.clear()
     
     # Update with new data
     worksheet.update([data.columns.values.tolist()] + data.values.tolist())
-    st.write(f"Data saved to Google Sheets with ID {sheet_id}")
+    #st.write(f"Data saved to Google Sheets with ID {sheet_id}")
 
 def fetch_technographics(api_key, domains, limit):
     main_df = pd.DataFrame()
