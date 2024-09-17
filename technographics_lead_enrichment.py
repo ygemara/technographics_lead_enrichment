@@ -22,10 +22,7 @@ def save_data_to_google_sheets(data):
     worksheet = sheet.worksheet("Sheet1")
 
     worksheet = client.open_by_key(sheet_id).worksheet('Sheet1')  # Replace 'Sheet1' with the actual sheet name
-    if worksheet:
-        worksheet.clear()
-    else:
-        st.write("Worksheet not found.")
+    
     st.write("hello")
     # Clear the existing content
     #worksheet.clear()
